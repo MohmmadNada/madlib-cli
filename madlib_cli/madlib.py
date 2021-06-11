@@ -60,7 +60,7 @@ def merge(template,from_user_input):
 
 if __name__ == '__main__':
     welcome_message()
-    templateRead=read_template('assets/dark_and_stormy_night_template.txt')
+    templateRead=read_template('assets/template.txt')
     valueTemplate,inputList=parse_template(templateRead) 
     user_input=words_from_template_to_input(inputList)
     merge(valueTemplate,user_input) 
