@@ -5,49 +5,63 @@ def welcome_message():
     '''
     Print a welcome message to the user, explaining the Madlib process and command line interactions
     '''
-    print('welcome in medlib , the game is ......')
+    print('**** Welcome to the Mad Libs Game! ****\n Mad Libs is a phrasal template word game\n where user(you) need to input different\n words following prompts. At the end you\n will get a story that was created\n using your inputs.\n ******************************************\n')
 #add test to this function
-welcome_message()
 
 def read_template (file):
     ''' 
-    read data from template 
-    '''
+    takes in a path to text file(read file) and returns a stripped string of the file’s contents.    '''
     try:
         with open(file,'r') as reader:
-            template=reader.read()
+            '''
+            strip():
+            all leading and trailing whitespaces are removed from the string.
+            '''
+            template=reader.read().strip()
             return(template)
     except FileNotFoundError:
-            return False
+            raise FileNotFoundError('the path wrong')
 
 def parse_template(template):
-    ''' function for get inputs from user and put it in array(list)'''
-    print('Input the words following the prompt (21 words) ')
-    template_with_empty_bracket = re.sub('\{[a-zA-Z0-9\' -]*\}', "{}", template)
+    ''' 
+    parse the file , into usable parts.
+    return  1. stripped , remove words between {}
+            2. input_list , get what we reomved into list 
+    '''
+    
+    stripped = re.sub('\{[a-zA-Z0-9\' -]*\}', "{}", template)
     input_list=re.findall("\{[a-zA-Z0-9\' -]*\}", template)
     i=0
     for x in input_list: 
-            input_list[i]=x.replace('{',"").replace('}',"")
+            input_list[i]=x.strip('{').strip('}')
             i+=1
-    return template_with_empty_bracket,tuple(input_list) 
+    input_list=tuple(input_list)
+    return stripped,input_list 
 
+def words_from_template_to_input (input_from_template):
+    '''
+    Prompt the user to submit a series of words to fit each of the required components of the Madlib template.
+    print('Input the words following the prompt (21 words)')
+    '''
+    from_user_input=[]
+    i=0
+    for item in  input_from_template:
+        from_user_input.append(input('enter '+input_from_template[i]+'  >   '))
+        i+=1
+    return from_user_input
 
-
-def merge(template,input_list):
+def merge(template,from_user_input):
     ''' add the input list in template and return template with input  '''
+    print('********************here is your story ********** ')
+    from_user_input=tuple(from_user_input)
+    redy_text= template.format(*from_user_input)
+    print('****************************  \n',redy_text,'\n****************************  ')
+    return redy_text
 
-    print( template.format(input_list))
-    return template.format(*input_list)
-# merge()
-
-
-
-# input_list=[input('Adjective   >  ')]+[input('Adjective   >  ')]+[input('A First Name  > ')]+[input('Past Tense Verb  > ')]+[input('A First Name  > ')]+[input('Adjective  > ')]+[input('Adjective  > ')]+[input('Plural Noun  > ')]+[input('Large Animal   > ')]+[input('Small Animal   > ')]+[input("A Girl's Name  > ")]+[input('Adjective> ')]+[input('Plural Noun> ')]+[input('Adjective> ')]+[input('Plural Noun> ')]+[input('Number 1-50> ')]+[input("First Name's> ")]+[input('Number> ')]+[input('Plural Noun> ')]+[input('Number> ')]+[input('Plural Noun> ')]
-    # # print(input_list)
-    # test_empty_bracket= read_template
-    # test_empty_bracket = re.sub("\{[a-zA-Z0-9\' -]*\}", "{}", test_empty_bracket)
-    # input_list=['majestic','purple','Scott','colored','JB','laughing','tickled','arrows','gorilla','butterfly','Betty','silly','tests','striped','jackets','44',"Wilson's'",'3','leaves','4','swords' ]
-    # return test_empty_bracket 
-    # to empty any ting between {} in template 
-# test_empty_bracket= read_template
-    # test_empty_bracket = re.sub("\{[a-zA-Z0-9\' -]*\}", "{}", test_empty_bracket)
+if __name__ == '__main__':
+    welcome_message()
+    templateRead=read_template('assets/dark_and_stormy_night_template.txt')
+    valueTemplate,inputList=parse_template(templateRead) 
+    user_input=words_from_template_to_input(inputList)
+    merge(valueTemplate,user_input) 
+    # quit()
